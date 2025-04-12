@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -29,10 +31,12 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = Auth::check() ? User::with('role')->find(Auth::id()) : null;
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
         ];
     }
